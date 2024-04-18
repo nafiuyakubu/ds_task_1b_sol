@@ -13,6 +13,8 @@ services:
       - 8000:5000
     volumes:
       - ./api:/app # [Host volume]
+    extra_hosts: #[hostname:ip_address] #using CMD[--add-host host.docker.internal(or localhost):host-gateway]
+      - "localhost:host-gateway"
     networks:
       - apiNet
 
@@ -25,7 +27,7 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - ./frontend/nginx:/etc/nginx/conf.d
+      # - ./frontend/nginx:/etc/nginx/conf.d
       - ./frontend/src:/usr/share/nginx/html
     restart: always
     depends_on:
