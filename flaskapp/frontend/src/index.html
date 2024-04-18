@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fruit Recommendation System</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Drink Preferences Questionnaire</h1>
+    <div class="container">
+      <form id="questionForm">
+        <div id="question1">
+          <label>1. Do you go out to party on weekends?</label>
+          <input type="radio" id="partyYes" name="party" value="yes" />
+          <label for="partyYes">Yes</label>
+          <input type="radio" id="partyNo" name="party" value="no" />
+          <label for="partyNo">No</label>
+        </div>
+        <div id="question2" style="display: none">
+          <label>2. What flavors do you like?</label>
+          <input type="radio" id="flavorCider" name="flavor" value="cider" />
+          <label for="flavorCider">Cider</label>
+          <input type="radio" id="flavorSweet" name="flavor" value="sweet" />
+          <label for="flavorSweet">Sweet</label>
+          <input
+            type="radio"
+            id="flavorWaterlike"
+            name="flavor"
+            value="waterlike"
+          />
+          <label for="flavorWaterlike">Waterlike</label>
+        </div>
+        <div id="question3" style="display: none">
+          <label>3. What texture do you dislike?</label>
+
+          <!-- <input type="smooth" id="smooth" name="flavor" value="cider" /> -->
+          <input type="radio" id="Smooth" name="Smooth" value="Smooth" />
+          <label for="Smooth">Smooth</label>
+
+          <input type="radio" id="Slimy" name="Slimy" value="Slimy" />
+          <label for="Slimy">Slimy</label>
+
+          <input type="radio" id="Rough" name="Rough" value="Rough" />
+          <label for="Rough">Rough</label>
+        </div>
+        <div id="question4" style="display: none">
+          <label>4. What price range will you buy a drink for?</label> <br />
+          <!-- <select id="price" name="price">
+            <option value="$1">$1</option>
+            <option value="$2">$2</option>
+            <option value="$3">$3</option>
+            <option value="$4">$4</option>
+            <option value="$5">$5</option>
+            <option value="$6">$6</option>
+            <option value="$7">$7</option>
+            <option value="$8">$8</option>
+            <option value="$9">$9</option>
+            <option value="$10">$10</option>
+          </select> -->
+
+          <input type="checkbox" value="$1" />
+          <label for="$1">$1</label>
+
+          <input type="checkbox" value="$2" />
+          <label for="$3">$2</label>
+
+          <input type="checkbox" value="$3" />
+          <label for="$3">$3</label>
+
+          <input type="checkbox" value="$4" />
+          <label for="$4">$4</label>
+
+          <input type="checkbox" value="$5" />
+          <label for="$5">$5</label>
+
+          <input type="checkbox" value="$6" />
+          <label for="$6">$6</label>
+
+          <input type="checkbox" value="$7" />
+          <label for="$7">$7</label>
+
+          <input type="checkbox" value="$8" />
+          <label for="$8">$8</label>
+
+          <input type="checkbox" value="$9" />
+          <label for="$9">$9</label>
+
+          <input type="checkbox" value="$10" />
+          <label for="$10">$10</label>
+        </div>
+        <div id="result" style="display: none">
+          Your recommendation is : Apple
+        </div>
+        <button id="submitButton" type="submit">Next</button>
+      </form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+      var currentQuestion = 1;
+      var totalQuestions = 4;
+
+      document
+        .getElementById("questionForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the form from submitting
+
+          // Display next question or show results
+          if (currentQuestion < totalQuestions) {
+            document.getElementById(
+              "question" + currentQuestion
+            ).style.display = "none";
+            currentQuestion++;
+            document.getElementById(
+              "question" + currentQuestion
+            ).style.display = "block";
+            if (currentQuestion === totalQuestions) {
+              document.getElementById("submitButton").textContent =
+                "Submit Answers";
+            }
+          } else {
+            // You can save the answers here using AJAX or any other method
+            // For demonstration, let's just alert the user
+
+            var formData = new FormData(this);
+            console.log(formData);
+            formData.append("data", true);
+            console.log(formDataToJson(formData));
+
+            $.ajax({
+              type: "POST",
+              url: "",
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                var res = jQuery.parseJSON(response);
+                // console.log(res);
+                if (res.status == 422) {
+                  // error
+                  // alert(res.message);
+                } else if (res.status == 200) {
+                  // success
+                }
+              },
+            });
+
+            document.getElementById(
+              "question" + currentQuestion
+            ).style.display = "none";
+            document.getElementById("submitButton").style.display = "none";
+            document.getElementById("result").style.display = "block";
+            alert("Thank you for completing the questionnaire!");
+          }
+        });
+    </script>
+  </body>
+</html>
+<script>
+  // Assuming formData is your FormData object
+  function formDataToJson(formData) {
+    const jsonObject = {};
+    formData.forEach((value, key) => {
+      // Check if the key already exists in the JSON object
+      if (jsonObject.hasOwnProperty(key)) {
+        // If the key already exists, convert its value to an array
+        if (!Array.isArray(jsonObject[key])) {
+          jsonObject[key] = [jsonObject[key]];
+        }
+        // Push the new value to the array
+        jsonObject[key].push(value);
+      } else {
+        // If the key doesn't exist, set its value
+        jsonObject[key] = value;
+      }
+    });
+    return JSON.stringify(jsonObject);
+  }
+</script>
