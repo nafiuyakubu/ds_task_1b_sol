@@ -38,21 +38,21 @@
       <form id="questionForm">
         <div id="question1">
           <label>1. Do you go out to party on weekends?</label>
-          <input type="radio" id="partyYes" name="party" value="yes" />
+          <input type="radio" id="partyYes" name="q1" value="yes" />
           <label for="partyYes">Yes</label>
-          <input type="radio" id="partyNo" name="party" value="no" />
+          <input type="radio" id="partyNo" name="q1" value="no" />
           <label for="partyNo">No</label>
         </div>
         <div id="question2" style="display: none">
           <label>2. What flavors do you like?</label>
-          <input type="radio" id="flavorCider" name="flavor" value="cider" />
+          <input type="radio" id="flavorCider" name="q2" value="cider" />
           <label for="flavorCider">Cider</label>
-          <input type="radio" id="flavorSweet" name="flavor" value="sweet" />
+          <input type="radio" id="flavorSweet" name="q2" value="sweet" />
           <label for="flavorSweet">Sweet</label>
           <input
             type="radio"
             id="flavorWaterlike"
-            name="flavor"
+            name="q2"
             value="waterlike"
           />
           <label for="flavorWaterlike">Waterlike</label>
@@ -61,13 +61,13 @@
           <label>3. What texture do you dislike?</label>
 
           <!-- <input type="smooth" id="smooth" name="flavor" value="cider" /> -->
-          <input type="radio" id="Smooth" name="Smooth" value="Smooth" />
+          <input type="radio" id="Smooth" name="q3" value="Smooth" />
           <label for="Smooth">Smooth</label>
 
-          <input type="radio" id="Slimy" name="Slimy" value="Slimy" />
+          <input type="radio" id="Slimy" name="q3" value="Slimy" />
           <label for="Slimy">Slimy</label>
 
-          <input type="radio" id="Rough" name="Rough" value="Rough" />
+          <input type="radio" id="Rough" name="q3" value="Rough" />
           <label for="Rough">Rough</label>
         </div>
         <div id="question4" style="display: none">
@@ -85,34 +85,34 @@
             <option value="$10">$10</option>
           </select> -->
 
-          <input type="radio" name="price" value="$1" />
+          <input type="radio" name="q4" value="$1" />
           <label for="$1">$1</label>
 
-          <input type="radio" name="price" value="$2" />
+          <input type="radio" name="q4" value="$2" />
           <label for="$3">$2</label>
 
-          <input type="radio" name="price" value="$3" />
+          <input type="radio" name="q4" value="$3" />
           <label for="$3">$3</label>
 
-          <input type="radio" name="price" value="$4" />
+          <input type="radio" name="q4" value="$4" />
           <label for="$4">$4</label>
 
-          <input type="radio" name="price" value="$5" />
+          <input type="radio" name="q4" value="$5" />
           <label for="$5">$5</label>
 
-          <input type="radio" name="price" value="$6" />
+          <input type="radio" name="q4" value="$6" />
           <label for="$6">$6</label>
 
-          <input type="radio" name="price" value="$7" />
+          <input type="radio" name="q4" value="$7" />
           <label for="$7">$7</label>
 
-          <input type="radio" name="price" value="$8" />
+          <input type="radio" name="q4" value="$8" />
           <label for="$8">$8</label>
 
-          <input type="radio" name="price" value="$9" />
+          <input type="radio" name="q4" value="$9" />
           <label for="$9">$9</label>
 
-          <input type="radio" name="price" value="$10" />
+          <input type="radio" name="q4" value="$10" />
           <label for="$10">$10</label>
         </div>
         <div id="result" style="display: none">
@@ -160,7 +160,7 @@
           url: "localhost:8000/recommend_fruits",
           data: jsonData,
           processData: false,
-          contentType: false,
+          contentType: "application/json", // Set content type to JSON
           success: function (response) {
             var res = jQuery.parseJSON(response);
             // console.log(res);

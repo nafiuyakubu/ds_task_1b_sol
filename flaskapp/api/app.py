@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort, make_response
 from flask_cors import CORS
 import random
 from openai import OpenAI
@@ -6,7 +6,8 @@ from openai import OpenAI
 import os
 
 #store OPENAI_API_KEY in the OPENAI_API_KEY environment variable
-os.environ['OPENAI_API_KEY'] = "YOUR_OPENAI_API_KEY_HERE" 
+os.environ['OPENAI_API_KEY'] = "YOUR_OPENAI_API_KEY" 
+
 
 app = Flask(__name__)
 CORS(app)
@@ -43,32 +44,44 @@ Please generate a list of recommended fruits based on the user's responses to th
 
 """
 
-# CORS(app, resources={r"/recommend_fruits": {"origins": "http://localhost:8080"}})
 # Function is responsible for generate recommendations using GPT-3
 def generate_recommendations(answers):
-    # Define the completion prompt with user answers
-    completion_prompt_with_answers = completion_prompt + "\nUser Answers:\n"
-    completion_prompt_with_answers += "1. Do you go out to party on weekends? " + answers[0] + "\n"
-    completion_prompt_with_answers += "2. What flavors do you like? " + answers[1] + "\n"
-    completion_prompt_with_answers += "3. What texture do you dislike? " + answers[2] + "\n"
-    completion_prompt_with_answers += "4. What is your price range for buying a drink? " + answers[3] + "\n"
-    client = OpenAI()
-    response = client.completions.create(
-        model="gpt-3.5-turbo",  # You can use other engines like "text-ada-002" as well
-        prompt=completion_prompt_with_answers,
-        stream=False,
-        max_tokens=200  # Adjust the max_tokens as needed
-    )
-    recommended_fruits = response.choices[0].text.strip().split('\n')[-1].split(': ')[-1].split(', ')
-    return recommended_fruits
+    try:
+        # Define the completion prompt with user answers
+        completion_prompt_with_answers = completion_prompt + "\nUser Answers:\n"
+        completion_prompt_with_answers += "1. Do you go out to party on weekends? " + answers['q1'] + "\n"
+        completion_prompt_with_answers += "2. What flavors do you like? " + answers['q2'] + "\n"
+        completion_prompt_with_answers += "3. What texture do you dislike? " + answers['q3'] + "\n"
+        completion_prompt_with_answers += "4. What is your price range for buying a drink? " + answers['q4'] + "\n"
+        # return completion_prompt_with_answers #[To check if prompt Details ]
+        client = OpenAI()
+        response = client.completions.create(
+            model="gpt-3.5-turbo",  # You can use other engines like "text-ada-002" as well
+            prompt=completion_prompt_with_answers,
+            stream=False,
+            max_tokens=200  # Adjust the max_tokens as needed
+        )
+        recommended_fruits = response.choices[0].text.strip().split('\n')[-1].split(': ')[-1].split(', ')
+        return recommended_fruits
+    except Exception as e:
+        # Handle other types of errors
+        # return f"An Api request error occurred: {e}"
+        abort(500, f"Api request Error : {e}")
+        
 
 
+
+# CORS(app, resources={r"/recommend_fruits": {"origins": "http://localhost:8080"}})
 @app.route('/recommend_fruits', methods=['POST'])
 def recommend_fruits():
-    answers = request.json
-    recommended_fruits = generate_recommendations(answers)
-    return jsonify({'recommended_fruits': recommended_fruits})
-
+    try:
+        answers = request.json
+        # return jsonify({'posteddata': answers})
+        recommended_fruits = generate_recommendations(answers)
+        return jsonify({'recommended_fruits': recommended_fruits})
+    except Exception as e:
+        # Handle other types of errors
+        return jsonify({"error": f"An error occurred: {e}"}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int("4000"), debug=True) 
