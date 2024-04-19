@@ -77,6 +77,12 @@ def recommend_fruits():
     try:
         answers = request.json
         # return jsonify({'posteddata': answers})
+
+        # Check if the JSON data is None or does not contain required keys
+        answers_keys = ['q1', 'q2', 'q3', 'q4']
+        if answers is None or not all(key in answers for key in answers_keys):
+            return jsonify({'error': 'Invalid JSON data. Ensure all required keys[q1, q2, q3, q4] are present.'}), 400
+       
         recommended_fruits = generate_recommendations(answers)
         return jsonify({'recommended_fruits': recommended_fruits})
     except Exception as e:
