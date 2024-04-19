@@ -13,10 +13,8 @@ services:
       - 8000:5000
     volumes:
       - ./api:/app # [Host volume]
-    extra_hosts: #[hostname:ip_address] #using CMD[--add-host host.docker.internal(or localhost):host-gateway]
-      - "localhost:host-gateway"
-    networks:
-      - apiNet
+    expose:
+      - 8000
 
   frontend:
     build:
@@ -25,20 +23,13 @@ services:
       args:
         SOURCE_DIR: "./frontend"
     ports:
-      - "8081:80"
+      - "8080:80"
     volumes:
       # - ./frontend/nginx:/etc/nginx/conf.d
       - ./frontend/src:/usr/share/nginx/html
     restart: always
     depends_on:
       - flaskapi
-    networks:
-      - apiNet
-      - frontendNet
-
-networks:
-  apiNet: {}
-  frontendNet: {}
 
   #   depends_on:
   #     - redis

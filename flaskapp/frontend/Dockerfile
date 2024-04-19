@@ -12,9 +12,6 @@ COPY ${SOURCE_DIR}/src /usr/share/nginx/html
 # Expose port 80
 EXPOSE 80
 
-# CMD ["sh", "-c", "ls && pwd"]
 
-
-# CMD ["sh", "-c", "cd ./usr/share/nginx/html/ && ls"]
-
+# CMD ["sh", "-c", "ls && echo '------' && cd ./usr/share/nginx/html/ && ls"]
 # CMD ["sh", "-c", "ls && pwd"]

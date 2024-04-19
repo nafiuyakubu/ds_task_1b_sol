@@ -85,40 +85,44 @@
             <option value="$10">$10</option>
           </select> -->
 
-          <input type="checkbox" value="$1" />
+          <input type="radio" name="price" value="$1" />
           <label for="$1">$1</label>
 
-          <input type="checkbox" value="$2" />
+          <input type="radio" name="price" value="$2" />
           <label for="$3">$2</label>
 
-          <input type="checkbox" value="$3" />
+          <input type="radio" name="price" value="$3" />
           <label for="$3">$3</label>
 
-          <input type="checkbox" value="$4" />
+          <input type="radio" name="price" value="$4" />
           <label for="$4">$4</label>
 
-          <input type="checkbox" value="$5" />
+          <input type="radio" name="price" value="$5" />
           <label for="$5">$5</label>
 
-          <input type="checkbox" value="$6" />
+          <input type="radio" name="price" value="$6" />
           <label for="$6">$6</label>
 
-          <input type="checkbox" value="$7" />
+          <input type="radio" name="price" value="$7" />
           <label for="$7">$7</label>
 
-          <input type="checkbox" value="$8" />
+          <input type="radio" name="price" value="$8" />
           <label for="$8">$8</label>
 
-          <input type="checkbox" value="$9" />
+          <input type="radio" name="price" value="$9" />
           <label for="$9">$9</label>
 
-          <input type="checkbox" value="$10" />
+          <input type="radio" name="price" value="$10" />
           <label for="$10">$10</label>
         </div>
         <div id="result" style="display: none">
-          Your recommendation is : Apple
+          <span id="res">Click on the button to get your recommendation</span>
+          <button onclick="submit_recommendation()" type="button">
+            Get Recommendation
+          </button>
+          <!-- <button onclick="startOver()" type="button">Start Over</button> -->
         </div>
-        <button id="submitButton" type="submit">Next</button>
+        <button id="nextButton" onclick="next()" type="button">Next</button>
       </form>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -126,60 +130,53 @@
     <script>
       var currentQuestion = 1;
       var totalQuestions = 4;
+      function next() {
+        if (currentQuestion < totalQuestions) {
+          document.getElementById("question" + currentQuestion).style.display =
+            "none";
+          currentQuestion++;
+          document.getElementById("question" + currentQuestion).style.display =
+            "block";
+          // if (currentQuestion === totalQuestions) {
+          //   document.getElementById("nextButton").textContent =
+          //     "Submit Answers";
+          // }
+        } else {
+          document.getElementById("question" + currentQuestion).style.display =
+            "none";
+          document.getElementById("nextButton").style.display = "none";
+          document.getElementById("result").style.display = "block";
+        }
+      }
+      function submit_recommendation() {
+        document.getElementById("res").innerHTML = "Processing...";
+        var formData = new FormData(questionForm);
+        var jsonData = formDataToJson(formData);
+        // console.log(formData);
+        console.log(formDataToJson(formData));
 
-      document
-        .getElementById("questionForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault(); // Prevent the form from submitting
-
-          // Display next question or show results
-          if (currentQuestion < totalQuestions) {
-            document.getElementById(
-              "question" + currentQuestion
-            ).style.display = "none";
-            currentQuestion++;
-            document.getElementById(
-              "question" + currentQuestion
-            ).style.display = "block";
-            if (currentQuestion === totalQuestions) {
-              document.getElementById("submitButton").textContent =
-                "Submit Answers";
+        $.ajax({
+          type: "POST",
+          url: "localhost:8000/recommend_fruits",
+          data: jsonData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var res = jQuery.parseJSON(response);
+            // console.log(res);
+            if (res.status == 422) {
+              // error
+              // alert(res.message);
+            } else if (res.status == 200) {
+              // success
             }
-          } else {
-            // You can save the answers here using AJAX or any other method
-            // For demonstration, let's just alert the user
-
-            var formData = new FormData(this);
-            console.log(formData);
-            formData.append("data", true);
-            console.log(formDataToJson(formData));
-
-            $.ajax({
-              type: "POST",
-              url: "",
-              data: formData,
-              processData: false,
-              contentType: false,
-              success: function (response) {
-                var res = jQuery.parseJSON(response);
-                // console.log(res);
-                if (res.status == 422) {
-                  // error
-                  // alert(res.message);
-                } else if (res.status == 200) {
-                  // success
-                }
-              },
-            });
-
-            document.getElementById(
-              "question" + currentQuestion
-            ).style.display = "none";
-            document.getElementById("submitButton").style.display = "none";
-            document.getElementById("result").style.display = "block";
-            alert("Thank you for completing the questionnaire!");
-          }
+          },
         });
+      }
+      function startOver() {
+        currentQuestion = 0;
+        next();
+      }
     </script>
   </body>
 </html>

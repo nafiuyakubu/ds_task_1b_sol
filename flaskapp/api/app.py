@@ -1,12 +1,16 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import random
-import openai
+from openai import OpenAI
 
+import os
+
+#store OPENAI_API_KEY in the OPENAI_API_KEY environment variable
+os.environ['OPENAI_API_KEY'] = "YOUR_OPENAI_API_KEY_HERE" 
 
 app = Flask(__name__)
+CORS(app)
 
-# Setup OpenAI API key here
-openai.api_key = 'YOUR_OPENAI_API_KEY_HERE'
 
 # Define the completion prompt
 completion_prompt = """Task: Your task is to create a recommendation system for fruits based on specific criteria provided by the user.
@@ -39,7 +43,7 @@ Please generate a list of recommended fruits based on the user's responses to th
 
 """
 
-
+# CORS(app, resources={r"/recommend_fruits": {"origins": "http://localhost:8080"}})
 # Function is responsible for generate recommendations using GPT-3
 def generate_recommendations(answers):
     # Define the completion prompt with user answers
@@ -48,12 +52,12 @@ def generate_recommendations(answers):
     completion_prompt_with_answers += "2. What flavors do you like? " + answers[1] + "\n"
     completion_prompt_with_answers += "3. What texture do you dislike? " + answers[2] + "\n"
     completion_prompt_with_answers += "4. What is your price range for buying a drink? " + answers[3] + "\n"
-
-    response = openai.Completion.create(
-        engine="text-davinci-002",
+    client = OpenAI()
+    response = client.completions.create(
+        model="gpt-3.5-turbo",  # You can use other engines like "text-ada-002" as well
         prompt=completion_prompt_with_answers,
-        temperature=0.7,
-        max_tokens=200
+        stream=False,
+        max_tokens=200  # Adjust the max_tokens as needed
     )
     recommended_fruits = response.choices[0].text.strip().split('\n')[-1].split(': ')[-1].split(', ')
     return recommended_fruits
